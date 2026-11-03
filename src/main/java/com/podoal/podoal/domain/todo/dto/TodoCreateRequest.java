@@ -1,9 +1,12 @@
 package com.podoal.podoal.domain.todo.dto;
 
+import lombok.Getter;
+
 import java.time.LocalDate;
 
+@Getter
 public class TodoCreateRequest {
-    Long userId;
-    String content;
-    LocalDate todoDate;
+    private Long userId;
+    private String content;
+    private LocalDate todoDate;
 }
