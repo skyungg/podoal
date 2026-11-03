@@ -38,4 +38,11 @@ public class ToDoController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{todoItemId}")
+    public ResponseEntity<Void> deleteTodo(@PathVariable("todoItemId") Long todoItemId){
+        todoService.deleteTodo(todoItemId);
+
+        return ResponseEntity.noContent().build();
+    }
 }
