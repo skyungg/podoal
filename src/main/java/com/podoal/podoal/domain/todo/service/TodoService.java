@@ -1,15 +1,19 @@
 package com.podoal.podoal.domain.todo.service;
 
 import com.podoal.podoal.domain.todo.dto.TodoCreateRequest;
+import com.podoal.podoal.domain.todo.dto.TodoResponse;
 import com.podoal.podoal.domain.todo.entity.ToDoItem;
 import com.podoal.podoal.domain.todo.entity.ToDoList;
 import com.podoal.podoal.domain.todo.repository.ToDoItemRepository;
 import com.podoal.podoal.domain.todo.repository.ToDoListRepository;
 import com.podoal.podoal.domain.user.entity.User;
 import com.podoal.podoal.domain.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,5 +47,27 @@ public class TodoService {
                 .build();
 
         toDoItemRepository.save(toDoItem);
+    }
+
+    public List<TodoResponse> getTodos(Long userId, LocalDate date){
+        // 1. userId로 회원 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
+
+        // 2. 해당 회원의 ToDoList 조회
+        ToDoList toDoList = toDoListRepository.findByUserAndTodoDate(user, date)
+                .orElse(null);
+
+        if(toDoList == null) {
+            return List.of();
+        }
+
+        // 3. ToDoList에 속한 ToDoItem 목록 조회
+        List<ToDoItem> toDoItemList = toDoItemRepository.findByTodoList(toDoList);
+
+        // 4. ToDoItem을 TodoResponse로 변환해서 반환
+        return toDoItemList.stream()
+                .map(TodoResponse::new)
+                .toList();
     }
 }
