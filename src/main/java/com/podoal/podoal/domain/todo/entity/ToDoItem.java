@@ -37,4 +37,12 @@ public class ToDoItem {
         this.todoList = todoList;
         this.isCompleted = false;
     }
+
+    public void updateContent(String content){
+        this.content = content;
+    }
+
+    public void changeToDoList(ToDoList todoList){
+        this.todoList = todoList;
+    }
 }
