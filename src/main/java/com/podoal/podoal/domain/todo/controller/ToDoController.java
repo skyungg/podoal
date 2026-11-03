@@ -2,6 +2,7 @@ package com.podoal.podoal.domain.todo.controller;
 
 import com.podoal.podoal.domain.todo.dto.TodoCreateRequest;
 import com.podoal.podoal.domain.todo.dto.TodoResponse;
+import com.podoal.podoal.domain.todo.dto.TodoUpdateRequest;
 import com.podoal.podoal.domain.todo.service.TodoService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
@@ -29,5 +30,12 @@ public class ToDoController {
         List<TodoResponse> todoResponseList = todoService.getTodos(userId, localDate);
 
         return ResponseEntity.ok(todoResponseList);
+    }
+
+    @PatchMapping("/{todoItemId}")
+    public ResponseEntity<Void> updateTodo(@PathVariable("todoItemId")Long todoItemId, @RequestBody TodoUpdateRequest todoUpdateRequest){
+        todoService.updaateTodo(todoItemId, todoUpdateRequest);
+
+        return ResponseEntity.noContent().build();
     }
 }
