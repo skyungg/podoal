@@ -2,6 +2,7 @@ package com.podoal.podoal.domain.todo.service;
 
 import com.podoal.podoal.domain.todo.dto.TodoCreateRequest;
 import com.podoal.podoal.domain.todo.dto.TodoResponse;
+import com.podoal.podoal.domain.todo.dto.TodoUpdateRequest;
 import com.podoal.podoal.domain.todo.entity.ToDoItem;
 import com.podoal.podoal.domain.todo.entity.ToDoList;
 import com.podoal.podoal.domain.todo.repository.ToDoItemRepository;
@@ -69,5 +70,33 @@ public class TodoService {
         return toDoItemList.stream()
                 .map(TodoResponse::new)
                 .toList();
+    }
+
+    @Transactional
+    public void updaateTodo(Long todoItemId, TodoUpdateRequest todoUpdateRequest){
+        // 1. todoItemId로 수정할 todoItem 조회
+        ToDoItem todoItem = toDoItemRepository.findById(todoItemId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 투두 아이템입니다"));
+
+        // 2.내용 수정
+        todoItem.updateContent(todoUpdateRequest.getContent());
+
+        // 3. 날짜 변경
+        ToDoList curTodoList = todoItem.getTodoList();
+        User user = curTodoList.getUser();
+
+        ToDoList targetList = toDoListRepository
+                .findByUserAndTodoDate(user, todoUpdateRequest.getTodoDate())
+                .orElseGet(() -> {
+                    ToDoList newList = ToDoList.builder()
+                            .user(user)
+                            .todoDate(todoUpdateRequest.getTodoDate())
+                            .build();
+
+                    return toDoListRepository.save(newList);
+                });
+
+        todoItem.changeToDoList(targetList);
+
     }
 }
