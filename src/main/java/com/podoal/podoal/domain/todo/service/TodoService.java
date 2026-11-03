@@ -99,4 +99,25 @@ public class TodoService {
         todoItem.changeToDoList(targetList);
 
     }
+
+    @Transactional
+    public void deleteTodo(Long todoItemId){
+        // 1. 삭제 할 ToDoItem 조회
+        ToDoItem todoItem = toDoItemRepository.findById(todoItemId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 투두 아이템입니다"));
+
+//        // 2. 삭제 할 ToDoItem의 ToDoList 가져오기
+//        ToDoList curTodoList = todoItem.getTodoList();
+
+        // 3. 조회한 ToDoItem 삭제
+        toDoItemRepository.delete(todoItem);
+
+//        // 4. 해당 ToDoList에 남은 TodoItem이 있는 지 확인
+//        List<ToDoItem> remainItemList = toDoItemRepository.findByTodoList(curTodoList);
+//
+//        // 5.없다면 해당 todolist 삭제
+//        if(remainItemList.isEmpty()){
+//            toDoListRepository.delete(curTodoList);
+//        }
+    }
 }
